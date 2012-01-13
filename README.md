@@ -4,4 +4,4 @@ This contains stacks, packages, and rosinstall files for various projects.
 
 ## Projects:
 
-* [ATRV Project](INSERT LINK HERE)
+* [ATRV Project](https://github.com/GAVLab/gavlab-ros-pkg/tree/master/atrv)
