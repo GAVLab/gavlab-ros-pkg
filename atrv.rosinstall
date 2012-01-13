@@ -1,5 +1,5 @@
-[{
+[
 {'git': {'local-name': 'mdc2250', 'uri': 'https://github.com/GAVLab/mdc2250.git', 'version': 'master'}},
 {'git': {'local-name': 'serial', 'uri': 'https://github.com/wjwwood/serial.git', 'version': 'boostless'}}
-}]
+]
 
