@@ -2,7 +2,7 @@
 
 ## Documentation
 
-REPLACE ME WITH LINK TO DOCS
+REPLACE ME WITH LINK TO DOCS!
 
 ## Dependencies
 
