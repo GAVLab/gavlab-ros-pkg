@@ -2,18 +2,24 @@
 
 ## Installation
 
-Create a ROS workspace (if you don't have one already):
+### Create a ROS workspace (if you don't have one already):
 
     mkdir ~/atrv_ws
     cd ~/atrv_ws
     rosws init .
 
-Download the ATRV project with the rosinstall file:
+_Note: you can change `~/atrv_ws/` to any path you would like._
 
-    rosinstall ~/atrv_ws "https://raw.github.com/GAVLab/gavlab-ros-pkg/master/atrv/atrv.rosinstall"
+### Source the `setup.bash` file to get the ROS_WORKSPACE environment variable up-to-date:
+
     source setup.bash
 
-Build the ATRV project:
+### Download the ATRV project with the rosinstall file:
+
+    rosinstall $ROS_WORKSPACE "https://raw.github.com/GAVLab/gavlab-ros-pkg/master/atrv/atrv.rosinstall"
+    source setup.bash
+
+### Build the ATRV project:
 
     rosmake --rosdep-install gavlab_atrv
 
