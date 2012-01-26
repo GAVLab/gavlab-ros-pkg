@@ -52,6 +52,42 @@
 namespace atrv {
 
 /*!
+ * Exception called when a connection to the atrv fails for some reason.
+ */
+class ConnectionFailedException : public std::exception {
+  const std::string e_what_;
+  int error_type_;
+public:
+  ConnectionFailedException(const std::string &e_what = "",
+                            int error_type = -1)
+  : e_what_(e_what), error_type_(error_type) {}
+  ~ConnectionFailedException() throw() {}
+
+  int error_type() {return error_type_;}
+
+  virtual const char * what() const throw() {
+    std::stringstream ss;
+    ss << "Failed to connect: " << this->e_what_;
+    return ss.str().c_str();
+  }
+};
+typedef boost::shared_ptr<ConnectionFailedException>
+ConnectionFailedExceptionPtr;
+
+/*!
+ * This function type describes the prototype for the telemetry callback.
+ * 
+ * The function takes a motor controller index, 1 for front and 2 for rear is 
+ * the convention but it matches to ATRV::connect parameters port1 and port2 
+ * respectively, and a std::string reference and returns nothing.  It is 
+ * called when new data from the telemetry system is received.
+ * 
+ * \see ATRV::setTelemetryCallback
+ */
+typedef boost::function<void(size_t mc_index, const std::string&)>
+TelemetryCallback;
+
+/*!
  * This function type describes the prototype for the logging callbacks.
  * 
  * The function takes a std::string reference and returns nothing.  It is 
@@ -60,8 +96,7 @@ namespace atrv {
  * logging system.  It can be set with any of the set<log level>Handler 
  * functions.
  * 
- * \see SerialListener::setInfoHandler, SerialListener::setDebugHandler, 
- * SerialListener::setWarningHandler
+ * \see ATRV::setInfoHandler
  */
 typedef boost::function<void(const std::string&)> LoggingCallback;
 
@@ -72,7 +107,7 @@ typedef boost::function<void(const std::string&)> LoggingCallback;
  * called from the library when an exception occurs in a library thread.
  * This exposes these exceptions to the user so they can to error handling.
  * 
- * \see SerialListener::setExceptionHandler
+ * \see ATRV::setExceptionHandler
  */
 typedef boost::function<void(const std::exception&)> ExceptionCallback;
 
@@ -94,15 +129,42 @@ public:
    * Examples: Linux - "/dev/ttyS0" Windows - "COM1"
    * \param port2 Defines the port for the second motor controller.
    * Examples: Linux - "/dev/ttyS1" Windows - "COM2"
+   * \params watchdog size_t time in milliseconds for the watchdog timeout 
+   * period.  Defaults to 1000 ms.
+   * \params echo bool true enables echoing on the motor controllers.  
+   * Defaults to true
    * 
    * \throws ConnectionFailedException connection attempt failed.
    */
-  void connect(std::string port1, std::string port2);
+  void connect(std::string port1, std::string port2,
+               size_t watchdog = 1000, bool echo = true);
 
   /*!
    * Disconnects from the ATRV.
    */
   void disconnect();
+
+  /*!
+   * Moves the ATRV.
+   * 
+   * \params linear_velocity ssize_t value for linear velocity in m/s
+   * 
+   * \params angular_velocity ssize_t value for angular velocity in rad/s
+   */
+  void move(ssize_t linear_velocity=0, ssize_t angular_velocity=0);
+
+  /*!
+   * Sets the function to be called when new telemetry is available.
+   * 
+   * \param telemetry_callback A function pointer to the callback to handle
+   * new telemetry.
+   * 
+   * \see atrv::TelemetryCallback, ATRV::setInfoHandler
+   */
+  void
+  setTelemetryCallback (TelemetryCallback telemetry_callback) {
+    this->telemetry_cb_ = telemetry_callback;
+  }
 
   /*!
    * Sets the function to be called when an info logging message occurs.
@@ -178,28 +240,28 @@ private:
   ExceptionCallback handle_exc;
   LoggingCallback info;
 
-  mdc2250::MDC2250 motor_controller1, motor_controller2;
+  // Motor controllers
+  mdc2250::MDC2250 front_mc_, rear_mc_;
+  // Concurrent connecting variables
+  std::string front_mc_error_, rear_mc_error_;
+  void connect_(size_t mc_index, const std::string &port,
+                size_t wd, bool echo);
+  void disconnect_(size_t mc_index);
 
-};
+  // Telemetry variables
+  TelemetryCallback telemetry_cb_;
 
-/*!
- * Exception called when a connection to the atrv fails for some reason.
- */
-class ConnectionFailedException : public std::exception {
-  const std::string e_what_;
-  int error_type_;
-public:
-  ConnectionFailedException(const std::string &e_what, int error_type = 0)
-  : e_what_(e_what), error_type_(error_type) {}
-  ~ConnectionFailedException() throw() {}
+  // MDC2250 logging
+  void info_cb_(const std::string &msg, size_t mc_index);
 
-  int error_type() {return error_type_;}
+  // Vehicle geometry
+  double track_width_, wheel_radius_;
+  size_t max_rpm_, encoder_ppr_;
+  ssize_t left_wheel_effort_, right_wheel_effort_;
 
-  virtual const char * what() const throw() {
-    std::stringstream ss;
-    ss << "Connecting to the ATRV: " << this->e_what_;
-    return ss.str().c_str();
-  }
+  // Move thread safety
+  boost::mutex move_mux;
+
 };
 
 }
