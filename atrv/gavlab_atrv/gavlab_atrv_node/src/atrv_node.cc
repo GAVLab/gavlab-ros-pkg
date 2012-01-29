@@ -97,7 +97,7 @@ public:
       if (ros::ok() && this->connected) {
         ROS_INFO("ATRV Ready.");
         while (ros::ok() && this->connected) {
-          ros::Duration(1.0).sleep();
+          ros::Duration(0.1).sleep();
         }
       }
       if (ros::ok()) {
@@ -232,6 +232,13 @@ private:
     return;
   }
 
+  void
+  handleExceptions(const std::exception &error) {
+    this->connected = false;
+    this->disconnect();
+    ROS_ERROR("ATRV: %s", error.what());
+  }
+
   void setupATRV() {
     // Setup telemetry
     using namespace mdc2250::queries;
@@ -241,6 +248,10 @@ private:
     this->atrv_.setTelemetryCallback(boost::bind(&ATRVNode::telemetryCallback,
                                                  this, _1, _2, _3),
                                      any_query);
+    // Replace the info callback
+    this->atrv_.setInfoHandler(handleInfoMessages);
+    this->atrv_.setExceptionHandler(boost::bind(&ATRVNode::handleExceptions,
+                                                this, _1));
   }
 
   void setupROSComms() {
