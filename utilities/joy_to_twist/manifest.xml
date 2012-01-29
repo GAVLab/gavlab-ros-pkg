@@ -1,0 +1,16 @@
+<package>
+  <description brief="joy_to_twist">
+
+     joy_to_twist
+
+  </description>
+  <author>William Woodall</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/joy_to_twist</url>
+  <depend package="sensor_msgs"/>
+  <depend package="geometry_msgs"/>
+
+</package>
+
+
