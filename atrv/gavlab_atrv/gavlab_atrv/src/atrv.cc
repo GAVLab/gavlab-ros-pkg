@@ -8,18 +8,6 @@
 
 namespace atrv_ {
 
-inline void
-defaultTelemetryCallback(size_t mc_index, const std::string &msg) {
-  if (mc_index == 1) {
-    std::cout << "ATRV front telemetry: ";
-  } else if (mc_index == 2) {
-    std::cout << "ATRV rear telemetry: ";
-  } else {
-    std::cout << "ATRV unknown telemetry: ";
-  }
-  std::cout << msg << std::endl;
-}
-
 inline void defaultInfoCallback(const std::string &msg) {
   std::cout << "ATRV Info: " << msg << std::endl;
 }
@@ -42,7 +30,6 @@ ATRV::ATRV() {
   // Set default callbacks
   this->handle_exc = defaultExceptionCallback;
   this->info = defaultInfoCallback;
-  this->telemetry_cb_ = defaultTelemetryCallback;
 
   // Hook into the MDC2250 logging
   front_mc_.setInfoHandler(boost::bind(&ATRV::info_cb_, this, _1, 1));
@@ -78,8 +65,12 @@ ATRV::connect(std::string port1, std::string port2,
     throw(ConnectionFailedException("Rear mdc2250: "+rear_mc_error_));
 
   // Setup telemetry
-  front_mc_.setTelemetry("C,V,C,A", 25, boost::bind(telemetry_cb_, 1, _1));
-  front_mc_.setTelemetry("C,V,C,A", 25, boost::bind(telemetry_cb_, 2, _1));
+  std::string telem = "C,FF,C,V,C,BA,C,T,C,A";
+  size_t period = 10;
+  front_mc_.setTelemetry(telem, period, boost::bind(&ATRV::parse_telemetry_,
+                                                    this, 1, _1));
+  rear_mc_.setTelemetry(telem, period, boost::bind(&ATRV::parse_telemetry_,
+                                                   this, 2, _1));
 }
 
 void
@@ -121,6 +112,13 @@ ATRV::move(ssize_t linear_velocity, ssize_t angular_velocity) {
 }
 
 void
+ATRV::setTelemetryCallback (TelemetryCallback telemetry_callback,
+                            mdc2250::queries::QueryType query_type)
+{
+  telemetry_cb_map_[query_type] = telemetry_callback;
+}
+
+void
 ATRV::connect_(size_t mc_index, const std::string &port, size_t wd, bool echo)
 {
   if (mc_index == 1) {
@@ -156,6 +154,34 @@ ATRV::disconnect_(size_t mc_index) {
     }
   } else {
     front_mc_error_ = "Invalid mc_index, must be 1 or 2.";
+  }
+}
+
+void
+ATRV::parse_telemetry_(size_t motor_index, const std::string &msg) {
+  using namespace queries;
+  QueryType query_type = detect_response_type(msg);
+
+  std::vector<long> data;
+  decode_generic_response(msg, data);
+
+  // Grab the ?FF fault flag
+  if (query_type == fault_flag && data[0] == 16) {
+    std::stringstream ss;
+    if (motor_index == 1) {
+      ss << "Front ";
+    } else {
+      ss << "Rear ";
+    }
+    ss << "motor controller has been e-stopped.";
+    this->info(ss.str());
+  }
+
+  if (telemetry_cb_map_.count(query_type) > 0) {
+    telemetry_cb_map_[query_type](motor_index, query_type, data);
+  } else // No specific callback, try generic
+  if (telemetry_cb_map_.count(any_query) > 0){ 
+    telemetry_cb_map_[any_query](motor_index, query_type, data);
   }
 }
 

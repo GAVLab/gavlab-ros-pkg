@@ -42,12 +42,15 @@
 // Standard Library Headers
 #include <string>
 #include <sstream>
+#include <vector>
+#include <map>
 
 // Boost Headers
 #include <boost/function.hpp>
 
 // MDC2250 Headers
 #include "mdc2250/mdc2250.h"
+#include "mdc2250/decode.h"
 
 namespace atrv {
 
@@ -71,20 +74,24 @@ public:
     return ss.str().c_str();
   }
 };
-typedef boost::shared_ptr<ConnectionFailedException>
-ConnectionFailedExceptionPtr;
 
 /*!
  * This function type describes the prototype for the telemetry callback.
  * 
  * The function takes a motor controller index, 1 for front and 2 for rear is 
  * the convention but it matches to ATRV::connect parameters port1 and port2 
- * respectively, and a std::string reference and returns nothing.  It is 
- * called when new data from the telemetry system is received.
+ * respectively, a mdc2250::queries::QueryType which describes the type of 
+ * data in the telemetry (see mdc2250/decode.h), a std::vector of long's 
+ * containing the telemetry data, and returns nothing.  It is 
+ * called when new data from the telemetry system is received.  For more 
+ * information about the query data refer to the mdc2250 user manual starting 
+ * at page 99.
  * 
  * \see ATRV::setTelemetryCallback
  */
-typedef boost::function<void(size_t mc_index, const std::string&)>
+typedef boost::function<void(size_t mc_index,
+                             const mdc2250::queries::QueryType &query_type,
+                             std::vector<long> &telemetry)>
 TelemetryCallback;
 
 /*!
@@ -162,9 +169,9 @@ public:
    * \see atrv::TelemetryCallback, ATRV::setInfoHandler
    */
   void
-  setTelemetryCallback (TelemetryCallback telemetry_callback) {
-    this->telemetry_cb_ = telemetry_callback;
-  }
+  setTelemetryCallback (TelemetryCallback telemetry_callback,
+                        mdc2250::queries::QueryType query_type =
+                        mdc2250::queries::any_query);
 
   /*!
    * Sets the function to be called when an info logging message occurs.
@@ -235,6 +242,10 @@ public:
     this->handle_exc = exception_handler;
   }
 
+  // Vehicle geometry
+  double track_width_, wheel_radius_;
+  size_t max_rpm_, encoder_ppr_;
+
 private:
   // Exception callback handle
   ExceptionCallback handle_exc;
@@ -249,14 +260,13 @@ private:
   void disconnect_(size_t mc_index);
 
   // Telemetry variables
-  TelemetryCallback telemetry_cb_;
+  void parse_telemetry_(size_t motor_index, const std::string &msg);
+  std::map<mdc2250::queries::QueryType, TelemetryCallback> telemetry_cb_map_;
 
   // MDC2250 logging
   void info_cb_(const std::string &msg, size_t mc_index);
 
-  // Vehicle geometry
-  double track_width_, wheel_radius_;
-  size_t max_rpm_, encoder_ppr_;
+  // Motor controll
   ssize_t left_wheel_effort_, right_wheel_effort_;
 
   // Move thread safety

@@ -3,7 +3,8 @@
     <include file="$(find gavlab_atrv_launch)/launch/transforms.xml"/>
     
     <!-- Start the node that interfaces with the motor controllers -->
-    <node pkg="gavlab_atrv" type="atrv_node" name="atrv_node" output="screen">
+    <node pkg="gavlab_atrv" type="atrv_node" name="atrv_node"
+          output="screen" required="true">
         <param name="port1" type="string" value="/dev/ttyUSB0" />
         <param name="port2" type="string" value="/dev/ttyUSB1" />
     </node>
