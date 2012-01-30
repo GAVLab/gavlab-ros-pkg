@@ -62,8 +62,8 @@ public:
   }
 
   void disconnect() {
-    this->connected = false;
     this->atrv_.disconnect();
+    this->connected = false;
   }
 
   void run() {
@@ -85,9 +85,11 @@ public:
     this->connected = false;
     while (ros::ok()) {
       try {
+        ROS_INFO("Connecting to ATRV with front_port: %s, and rear_port: %s",
+                 this->front_port.c_str(), this->rear_port.c_str());
         this->atrv_.connect(this->front_port, this->rear_port, 250, true);
         this->connected = true;
-      } catch (std::exception& e) {
+      } catch (const std::exception& e) {
         std::string e_msg(e.what());
         ROS_ERROR("Exception while connecting to the ATRV, "
                   "check your cables and power buttons:");
@@ -122,7 +124,6 @@ public:
       } catch (std::exception& e) {
         std::string e_msg(e.what());
         ROS_ERROR("Error commanding ATRV: %s", e_msg.c_str());
-        this->connected = false;
         this->disconnect();
       }
     }
@@ -234,9 +235,8 @@ private:
 
   void
   handleExceptions(const std::exception &error) {
-    this->connected = false;
-    this->disconnect();
     ROS_ERROR("ATRV: %s", error.what());
+    this->disconnect();
   }
 
   void setupATRV() {
