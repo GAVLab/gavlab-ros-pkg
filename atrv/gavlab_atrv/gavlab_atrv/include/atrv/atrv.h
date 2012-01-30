@@ -76,6 +76,37 @@ public:
 };
 
 /*!
+ * Exception called when an exception occurs in the motor controller.
+ */
+class ATRVException : public std::exception {
+  const std::string e_what_;
+  size_t mc_index_;
+  int error_type_;
+public:
+  ATRVException(const std::string &e_what = "",
+                size_t mc_index = -1,
+                int error_type = -1)
+  : e_what_(e_what), mc_index_(mc_index), error_type_(error_type) {}
+  ~ATRVException() throw() {}
+
+  int error_type() {return error_type_;}
+
+  virtual const char * what() const throw() {
+    std::stringstream ss;
+    ss << "Exception with the ";
+    if (this->mc_index_ == 1) {
+      ss << "front motor controller";
+    } else if (this->mc_index_ == 2) {
+      ss << "rear motor controller";
+    } else {
+      ss << "atrv";
+    }
+    ss << ": " << this->e_what_;
+    return ss.str().c_str();
+  }
+};
+
+/*!
  * This function type describes the prototype for the telemetry callback.
  * 
  * The function takes a motor controller index, 1 for front and 2 for rear is 
@@ -263,8 +294,9 @@ private:
   void parse_telemetry_(size_t motor_index, const std::string &msg);
   std::map<mdc2250::queries::QueryType, TelemetryCallback> telemetry_cb_map_;
 
-  // MDC2250 logging
+  // MDC2250 logging and error handling
   void info_cb_(const std::string &msg, size_t mc_index);
+  void exception_cb_(const std::exception &error, size_t mc_index);
 
   // Motor controll
   ssize_t left_wheel_effort_, right_wheel_effort_;

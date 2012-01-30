@@ -197,5 +197,11 @@ ATRV::info_cb_(const std::string &msg, size_t mc_index) {
   this->info(ss.str());
 }
 
+void
+ATRV::exception_cb_(const std::exception &error, size_t mc_index) {
+  ATRVException e(error.what(), mc_index);
+  this->handle_exc(e);
+}
+
 
 
