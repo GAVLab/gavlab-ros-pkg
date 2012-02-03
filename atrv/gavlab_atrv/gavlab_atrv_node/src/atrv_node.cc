@@ -62,15 +62,15 @@ public:
   }
 
   void disconnect() {
-    this->atrv_.disconnect();
+    this->atrv_->disconnect();
+    delete this->atrv_;
+    this->atrv_ = NULL;
     this->connected = false;
   }
 
   void run() {
     if (!this->getParameters())
       return;
-
-    this->setupATRV();
 
     this->setupROSComms();
 
@@ -87,7 +87,8 @@ public:
       try {
         ROS_INFO("Connecting to ATRV with front_port: %s, and rear_port: %s",
                  this->front_port.c_str(), this->rear_port.c_str());
-        this->atrv_.connect(this->front_port, this->rear_port, 250, true);
+        this->setupATRV();
+        this->atrv_->connect(this->front_port, this->rear_port, 250, false);
         this->connected = true;
       } catch (const std::exception& e) {
         std::string e_msg(e.what());
@@ -120,7 +121,7 @@ public:
     if (ros::ok() && this->connected) {
       boost::mutex::scoped_lock lock(this->m_mutex);
       try {
-        this->atrv_.move(this->linear_vel, this->angular_vel);
+        this->atrv_->move(this->linear_vel, this->angular_vel);
       } catch (std::exception& e) {
         std::string e_msg(e.what());
         ROS_ERROR("Error commanding ATRV: %s", e_msg.c_str());
@@ -240,17 +241,21 @@ private:
   }
 
   void setupATRV() {
+    if (this->atrv_ != NULL) {
+      this->disconnect();
+    }
+    this->atrv_ = new atrv::ATRV();
     // Setup telemetry
     using namespace mdc2250::queries;
-    this->atrv_.setTelemetryCallback(boost::bind(&ATRVNode::encoderCallback,
+    this->atrv_->setTelemetryCallback(boost::bind(&ATRVNode::encoderCallback,
                                                  this, _1, _2, _3),
                                      encoder_count_absolute);
-    this->atrv_.setTelemetryCallback(boost::bind(&ATRVNode::telemetryCallback,
+    this->atrv_->setTelemetryCallback(boost::bind(&ATRVNode::telemetryCallback,
                                                  this, _1, _2, _3),
                                      any_query);
     // Replace the info callback
-    this->atrv_.setInfoHandler(handleInfoMessages);
-    this->atrv_.setExceptionHandler(boost::bind(&ATRVNode::handleExceptions,
+    this->atrv_->setInfoHandler(handleInfoMessages);
+    this->atrv_->setExceptionHandler(boost::bind(&ATRVNode::handleExceptions,
                                                 this, _1));
   }
 
@@ -277,7 +282,7 @@ private:
   ros::Publisher front_encoder_pub, rear_encoder_pub;
   tf::TransformBroadcaster odom_broadcaster;
 
-  atrv::ATRV atrv_;
+  atrv::ATRV * atrv_;
 
   std::string front_port;
   std::string rear_port;

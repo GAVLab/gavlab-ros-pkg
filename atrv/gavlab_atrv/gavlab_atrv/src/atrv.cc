@@ -33,7 +33,9 @@ ATRV::ATRV() {
 
   // Hook into the MDC2250 logging
   front_mc_.setInfoHandler(boost::bind(&ATRV::info_cb_, this, _1, 1));
+  front_mc_.setExceptionHandler(boost::bind(&ATRV::exc_cb_, this, _1, 1));
   rear_mc_.setInfoHandler(boost::bind(&ATRV::info_cb_, this, _1, 2));
+  rear_mc_.setExceptionHandler(boost::bind(&ATRV::exc_cb_, this, _1, 1));
 
   // Set vehicle parameters
   track_width_ = 0.76; // meters
@@ -198,7 +200,7 @@ ATRV::info_cb_(const std::string &msg, size_t mc_index) {
 }
 
 void
-ATRV::exception_cb_(const std::exception &error, size_t mc_index) {
+ATRV::exc_cb_(const std::exception &error, size_t mc_index) {
   ATRVException e(error.what(), mc_index);
   this->handle_exc(e);
 }

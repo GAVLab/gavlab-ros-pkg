@@ -296,7 +296,7 @@ private:
 
   // MDC2250 logging and error handling
   void info_cb_(const std::string &msg, size_t mc_index);
-  void exception_cb_(const std::exception &error, size_t mc_index);
+  void exc_cb_(const std::exception &error, size_t mc_index);
 
   // Motor controll
   ssize_t left_wheel_effort_, right_wheel_effort_;
