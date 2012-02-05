@@ -1,0 +1,17 @@
+#SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="FTF0CHX5", SYMLINK+="SickLidar"
+
+# 4-port keyspan
+SUBSYSTEMS=="usb-serial", DRIVERS=="keyspan_4", ATTRS{port_number}=="0" SYMLINK+="atrv_rear_wheels"
+SUBSYSTEMS=="usb-serial", DRIVERS=="keyspan_4", ATTRS{port_number}=="1" SYMLINK+="atrv_front_wheels"
+SUBSYSTEMS=="usb-serial", DRIVERS=="keyspan_4", ATTRS{port_number}=="2" SYMLINK+="keyspan_unused_3"
+SUBSYSTEMS=="usb-serial", DRIVERS=="keyspan_4", ATTRS{port_number}=="3" SYMLINK+="keyspan_unused_4"
+
+# XBow IMU440
+SUBSYSTEMS=="usb-serial", DRIVERS=="pl2303", ATTRS{port_number}=="0" SYMLINK+="IMU440"
+
+# uBlox
+SUBSYSTEMS=="usb", ATTRS{product}=="u-blox 6  -  GPS Receiver" SYMLINK+="uBlox"
+
+# Xsens IMU
+SUBSYSTEM=="usb-serial", ATTRS{manufacturer}=="Xsens", ATTRS{serial}=="XSTONUTU" SYMLINK+="xsens"
+
