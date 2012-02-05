@@ -2,6 +2,7 @@
 {'git': {'local-name': 'gavlab_atrv', 'uri': 'https://github.com/GAVLab/gavlab_atrv.git'}},
 {'git': {'local-name': 'mdc2250', 'uri': 'https://github.com/GAVLab/mdc2250.git', 'version': 'master'}},
 {'git': {'local-name': 'serial', 'uri': 'https://github.com/wjwwood/serial.git', 'version': 'boostless'}},
+{'git': {'local-name': 'serial_utils', 'uri': 'https://github.com/wjwwood/serial_utils.git', 'version': 'master'}},
 {'svn': {'local-name': 'joy_to_twist', 'uri': 'https://github.com/GAVLab/gavlab-ros-pkg/trunk/utilities/joy_to_twist'}}
 ]
 
