@@ -62,31 +62,25 @@ from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Twist
 
 # Python Libraries
-import sys
+#import sys
 import traceback
-
-###  Variables  ###
-LINEAR_SCALAR = None
-ANGULAR_SCALAR = None
 
 ###  Classes  ###
 
 class Joy2Twist(object):
     """Joy2Twist ROS Node"""
     def __init__(self):
-        global LINEAR_SCALAR, ANGULAR_SCALAR
         # Initialize the Node
         rospy.init_node("Joy2Twist")
         
         # Get the linear scalar and angular scalar parameter
-        LINEAR_SCALAR = rospy.get_param('~max_linear_vel', 0.2)
-        ANGULAR_SCALAR = rospy.get_param('~max_angular_vel', 0.05)
+        self.LINEAR_SCALAR = rospy.get_param('~max_linear_vel', 0.2)
+        self.ANGULAR_SCALAR = rospy.get_param('~max_angular_vel', 0.05)
         rospy.loginfo("Using max_linear_vel: %f and max_angular_vel: %f" %
-                      (LINEAR_SCALAR, ANGULAR_SCALAR))
+                      (self.LINEAR_SCALAR, self.ANGULAR_SCALAR))
         
         # Setup the Joy topic subscription
-        self.joy_subscriber = 
-          rospy.Subscriber("joy", Joy, self.handleJoyMessage, queue_size=1)
+        self.joy_subscriber = rospy.Subscriber("joy", Joy, self.handleJoyMessage, queue_size=1)
         
         # Setup the Twist topic publisher
         self.twist_publisher = rospy.Publisher("cmd_vel", Twist)
@@ -96,17 +90,16 @@ class Joy2Twist(object):
 
     def handleJoyMessage(self, data):
         """Handles incoming Joy messages"""
-        global LINEAR_SCALAR, ANGULAR_SCALAR
         msg = Twist()
         trigger_val = data.axes[2]
         trigger_val += 1
         trigger_val /= 2
         trigger_val = 1 - trigger_val
         msg.linear.x = data.axes[1]
-        scalar = (LINEAR_SCALAR/4.0 + trigger_val*(LINEAR_SCALAR*3.0/4.0))
+        scalar = (self.LINEAR_SCALAR/4.0 + trigger_val*(self.LINEAR_SCALAR*3.0/4.0))
         msg.linear.x *= scalar
         msg.angular.z = data.axes[0]
-        scalar = (ANGULAR_SCALAR/4.0 + trigger_val*(ANGULAR_SCALAR*3.0/4.0))
+        scalar = (self.ANGULAR_SCALAR/4.0 + trigger_val*(self.ANGULAR_SCALAR*3.0/4.0))
         msg.angular.z *= scalar
         self.twist_publisher.publish(msg)
     
