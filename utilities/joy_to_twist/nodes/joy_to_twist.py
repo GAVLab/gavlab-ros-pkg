@@ -100,6 +100,7 @@ class Joy2Twist(object):
         msg.linear.x *= scalar
         msg.angular.z = data.axes[0]
         scalar = (self.ANGULAR_SCALAR/4.0 + trigger_val*(self.ANGULAR_SCALAR*3.0/4.0))
+        scalar *= -1
         msg.angular.z *= scalar
         self.twist_publisher.publish(msg)
     
