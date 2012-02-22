@@ -1,8 +1,15 @@
 [
+# This repo holds the atrv library that is specific to the gavlab's atrv and other ROS packages
 {'git': {'local-name': 'gavlab_atrv', 'uri': 'https://github.com/GAVLab/gavlab_atrv.git', 'version': 'master'}},
+# This is the repo for the general mdc2250 library
 {'git': {'local-name': 'mdc2250', 'uri': 'https://github.com/GAVLab/mdc2250.git', 'version': 'master'}},
+# This is the repo that containts the serial library used by serial_utils and mdc2250
 {'git': {'local-name': 'serial', 'uri': 'https://github.com/wjwwood/serial.git', 'version': 'boostless'}},
+# This is the repo that contains the serial listener class used by mdc2250
 {'git': {'local-name': 'serial_utils', 'uri': 'https://github.com/wjwwood/serial_utils.git', 'version': 'master'}},
+# This repo is just a utility for converting joystick messages into cmd_vel's
 {'svn': {'local-name': 'joy_to_twist', 'uri': 'https://github.com/GAVLab/gavlab-ros-pkg/trunk/utilities/joy_to_twist'}}
+# This repo holds the Laser range finder drivers for the sick lms151
+{'git': {'local-name': 'RCPRG_laser_drivers'm 'uri': 'https://github.com/RCPRG-ros-pkg/RCPRG_laser_drivers.git', 'version': 'master'}}
 ]
 
