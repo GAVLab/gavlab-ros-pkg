@@ -10,6 +10,6 @@
 # This repo is just a utility for converting joystick messages into cmd_vel's
 {'svn': {'local-name': 'joy_to_twist', 'uri': 'https://github.com/GAVLab/gavlab-ros-pkg/trunk/utilities/joy_to_twist'}},
 # This repo holds the Laser range finder drivers for the sick lms151
-{'git': {'local-name': 'RCPRG_laser_drivers'm 'uri': 'https://github.com/RCPRG-ros-pkg/RCPRG_laser_drivers.git', 'version': 'master'}}
+{'git': {'local-name': 'RCPRG_laser_drivers' 'uri': 'https://github.com/RCPRG-ros-pkg/RCPRG_laser_drivers.git', 'version': 'master'}}
 ]
 
