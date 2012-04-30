@@ -8,7 +8,7 @@
     cd ~/atrv_ws
     rosws init .
     
-_Note: for new versions of rosws the ROS_ROOT path must be given:
+Note: for new versions of rosws the ROS_ROOT path must be given:
 
     rosws init . $ROS_ROOT
 
