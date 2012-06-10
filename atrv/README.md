@@ -18,9 +18,13 @@ _Note: you can change `~/atrv_ws/` to any path you would like._
 
     source setup.bash
 
-### Download the ATRV project with the rosinstall file:
+### Add the atrv repos to your workspace:
 
-    rosinstall $ROS_WORKSPACE "https://raw.github.com/GAVLab/gavlab-ros-pkg/master/atrv/atrv.rosinstall"
+    rosws merge https://raw.github.com/GAVLab/gavlab-ros-pkg/master/atrv/atrv.rosinstall
+
+### Fetch/Update all the repos in your workspace:
+
+    rosinstall .
     source setup.bash
 
 ### Build the ATRV project:
