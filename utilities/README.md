@@ -6,4 +6,7 @@ This is a collection of common utility stacks, that are useful to multiple proje
 
 ###rosinstall:
 
-`{'svn': {'local-name': 'joy_to_twist', 'uri': 'https://github.com/GAVLab/gavlab-ros-pkg/trunk/utilities/joy_to_twist'}}`
+`- git:
+    local-name: gavlab-ros-pkg
+    uri: https://github.com/GAVLab/gavlab-ros-pkg.git
+    version: master`
