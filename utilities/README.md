@@ -6,7 +6,7 @@ This is a collection of common utility stacks, that are useful to multiple proje
 
 ###rosinstall:
 
-`- git:
-    local-name: gavlab-ros-pkg
-    uri: https://github.com/GAVLab/gavlab-ros-pkg.git
-    version: master`
+`- git:  
+    local-name: gavlab-ros-pkg  
+    uri: https://github.com/GAVLab/gavlab-ros-pkg.git  
+    version: master`  
