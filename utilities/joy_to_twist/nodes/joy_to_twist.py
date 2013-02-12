@@ -78,6 +78,7 @@ class Joy2Twist(object):
         self.ANGULAR_SCALAR = rospy.get_param('~max_angular_vel', 0.05)
         rospy.loginfo("Using max_linear_vel: %f and max_angular_vel: %f" %
                       (self.LINEAR_SCALAR, self.ANGULAR_SCALAR))
+        self.invert_z = -1 if bool(rospy.get_param('~invert_z', '')) else 1
         
         # Setup the Joy topic subscription
         self.joy_subscriber = rospy.Subscriber("joy", Joy, self.handleJoyMessage, queue_size=1)
@@ -98,7 +99,7 @@ class Joy2Twist(object):
         msg.linear.x = data.axes[1]
         scalar = (self.LINEAR_SCALAR/4.0 + trigger_val*(self.LINEAR_SCALAR*3.0/4.0))
         msg.linear.x *= scalar
-        msg.angular.z = data.axes[0]
+        msg.angular.z = data.axes[0] * self.invert_z
         scalar = (self.ANGULAR_SCALAR/4.0 + trigger_val*(self.ANGULAR_SCALAR*3.0/4.0))
         scalar *= -1
         msg.angular.z *= scalar
