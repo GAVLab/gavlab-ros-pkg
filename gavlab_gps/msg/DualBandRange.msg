@@ -1,4 +1,5 @@
-## This msg created 5/30/2013 for sending to DRTK
+## This msg created 5/30/2013
+## originally intended for sending to DRTK or TDCP
 
 Header header
     uint32 seq
