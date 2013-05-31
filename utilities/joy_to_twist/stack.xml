@@ -1,9 +1,0 @@
-<stack>
-  <description brief="joy_to_twist">joy_to_twist</description>
-  <author>Maintained by William Woodall</author>
-  <license>BSD</license>  
-  <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/joy_to_twist</url>
-  <depend stack="ros" />
-
-</stack>
