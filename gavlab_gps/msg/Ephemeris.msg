@@ -2,7 +2,8 @@ Header header
     uint32 seq
     time stamp
     string frame_id
-    string gps_id
+
+# string gps_id
 
 float64[32] clockCorrection  # toc, SV clock correction term (seconds)
 float64[32] groupDelay # tgd, Estimated group delay difference (seconds)

@@ -4,8 +4,9 @@ Header header
     uint32 seq
     time stamp
     string frame_id
-    string gps_id
-    int64 gps_time
+
+string gps_id
+int64 gps_time
 
 GpsRange L1
 GpsRange L2
