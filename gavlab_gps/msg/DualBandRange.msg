@@ -14,3 +14,6 @@ GpsRange L2
 float64 latitude
 float64 longitude
 float64 altitude
+float64 latitude_covariance
+float64 longitude_covariance
+float64 altitude_covariance
