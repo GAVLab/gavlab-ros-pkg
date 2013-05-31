@@ -1,7 +1,7 @@
-uint8[32] prn
-float64[32] psr
-float64[32] psrStd
-float64[32] carrierDoppler
-float64[32] carrierNoise
-float64[32] carrierPhase
-float64[32] carrierPhaseStd
+uint8[33] prn
+float64[33] psr
+float64[33] psrStd
+float64[33] carDoppler
+float64[33] carNoise
+float64[33] carPhase
+float64[33] carPhaseStd
