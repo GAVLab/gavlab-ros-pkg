@@ -5,7 +5,8 @@ Header header
 
 string  gps_id
 float64 gps_time
-int8    health[32]
+
+int8[32]    health
 
 # Positioning
 float64[32] semimajor_axis    # sqrt(A), SQUARE ROOT of semi major axis (meters)

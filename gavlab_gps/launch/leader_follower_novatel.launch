@@ -1,0 +1,24 @@
+<launch>
+
+    <node pkg="novatel" type="novatel_node" name="leader">
+
+    </node>
+
+    <node pkg="novatel" type="novatel_node" name="follower">
+
+    </node>
+
+    <node pkg="drtk" type="drtk_node" name="drtk">
+
+    </node>
+
+    <node pkg="tdcp" type="tdcp_node" name="tdcp">
+
+    </node>
+
+    <node pkg="leader_follower" type="leader_follower_node" name="lf">
+        <rosparam name="threshold" value="3"/>
+        <param name="frame_id" value=""
+    </node>
+
+</launch>

@@ -32,6 +32,13 @@ add_message_files(
         Ephemeris.msg
         DualBandRange.msg
         GpsRange.msg
+        DeltaPosition.msg
+        Carrier.msg
+        Rpv.msg
+        RpvData.msg
+        XYZRpvData.msg
+        ENURpvData.msg
+
 )
 
 ## Generate services in the 'srv' folder
