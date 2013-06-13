@@ -34,10 +34,10 @@ add_message_files(
         GpsRange.msg
         DeltaPosition.msg
         Carrier.msg
-        Rpv.msg
         RpvData.msg
         XYZRpvData.msg
         ENURpvData.msg
+        Rpv.msg
 
 )
 
